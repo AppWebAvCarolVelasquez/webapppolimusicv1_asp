@@ -18,16 +18,27 @@
 ' Set security headers
 Call SetSecurityHeaders()
 
-' Clear all session contents
+' Expire the actual ASP session cookie on the client.
+' The cookie name is dynamic (ASPSESSIONID + a per-app suffix), so we
+' read it from the incoming Cookie header instead of hardcoding names.
+Dim rawCookie, cookieParts, ci, cookieName, nameValue
+rawCookie = Request.ServerVariables("HTTP_COOKIE")
+If rawCookie <> "" Then
+    cookieParts = Split(rawCookie, ";")
+    For ci = 0 To UBound(cookieParts)
+        nameValue = Split(Trim(cookieParts(ci)), "=")
+        If UBound(nameValue) >= 0 Then
+            cookieName = Trim(nameValue(0))
+            If InStr(1, cookieName, "ASPSESSIONID", vbTextCompare) = 1 Then
+                Response.AddHeader "Set-Cookie", cookieName & "=; Path=/; HttpOnly; Expires=Thu, 01 Jan 1970 00:00:00 GMT"
+            End If
+        End If
+    Next
+End If
+
+' Clear all session contents and destroy the session
 Session.Contents.RemoveAll()
-
-' Abandon the session (IIS will destroy it)
 Session.Abandon()
-
-' Expire the ASP session cookie on the client side
-' (ASPSESSIONID cookies vary by name, but we attempt to clear common ones)
-Response.AddHeader "Set-Cookie", "ASPSESSIONID=; Path=/; HttpOnly; Expires=Thu, 01 Jan 1970 00:00:00 GMT"
-Response.AddHeader "Set-Cookie", "ASPSESSIONIDCQTTQSDB=; Path=/; HttpOnly; Expires=Thu, 01 Jan 1970 00:00:00 GMT"
 
 ' Redirect to login
 Redirect GetAppPath() & "/login.asp?logout=1"

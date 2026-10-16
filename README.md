@@ -36,12 +36,16 @@ PoliMusic es una plataforma musical que permite a los usuarios consultar el cat�
 
 ### 2. Crear el sitio en IIS
 
+**IMPORTANTE:** El proyecto debe ejecutarse fuera de la carpeta de perfil de usuario (`C:\Users\...`). La carpeta de perfil solo permite acceso a `SYSTEM`, `Administradores` y el propio usuario, por lo que IIS no puede leer los archivos si el proyecto está en el Escritorio o Documentos (error **HTTP 401.3 - Unauthorized**). Use una ruta como `C:\inetpub\wwwroot\webapppolimusicv1_asp`.
+
 1. Abra **Administrador de IIS** (`inetmgr`).
 2. Haga clic derecho en **Sitios > Agregar sitio web**.
 3. **Nombre del sitio:** `PoliMusic`
-4. **Ruta física:** `C:\Users\[usuario]\Desktop\APLICACIONES WEB AVANZADAS\webapppolimusicv1_asp`
+4. **Ruta física:** `C:\inetpub\wwwroot\webapppolimusicv1_asp`
 5. **Enlace:** Tipo `http`, Puerto `80`, Nombre de host según su preferencia.
 6. Haga clic en **Aceptar**.
+
+> **Script automático:** El repositorio incluye `setup_iis.bat` (crea la aplicación IIS) y `move_to_wwwroot.bat` (copia el proyecto a `C:\inetpub\wwwroot\webapppolimusicv1_asp`, actualiza la ruta física de la aplicación, aplica permisos NTFS y reinicia IIS). Ejecútelos **como Administrador**.
 
 ### 3. Configurar permisos
 
@@ -54,6 +58,8 @@ PoliMusic es una plataforma musical que permite a los usuarios consultar el cat�
 1. En el Administrador de IIS, seleccione el sitio.
 2. Abra **Restricciones de ISAPI y CGI** y asegúrese de que ASP esté permitido.
 3. En **ASP > Propiedades de depuración**, habilite los mensajes de error solo en desarrollo.
+
+> **Nota sobre los `#INCLUDE` (importante):** Las páginas de `admin/` incluyen los archivos compartidos con `#INCLUDE VIRTUAL="/webapppolimusicv1_asp/..."` en lugar de `#INCLUDE FILE="../..."`. IIS **bloquea por defecto las rutas primarias** (`..`) en los `#INCLUDE` y devuelve el error **ASP 0131 - Ruta de directorio primario no autorizada**. Usar `VIRTUAL` evita este error sin necesidad de habilitar `AspEnableParentPaths`, por lo que la aplicación funciona con la configuración de IIS por defecto. Si en algún momento se despliega bajo otra ruta virtual, ajuste el prefijo `/webapppolimusicv1_asp` en los `#INCLUDE VIRTUAL` de los archivos de `admin/`.
 
 ## Configuración de SQL Server
 
@@ -130,6 +136,8 @@ webapppolimusicv1_asp/
 │   └── images/                # Imágenes (del ZIP del taller)
 ├── docs/
 │   └── ACCESSIBILITY.md       # Documentación de accesibilidad WCAG 2.2 AA
+├── tools/
+│   └── asp_parse_check.py     # Verificador estático de errores de parseo en Classic ASP
 ├── logs/                      # Registros de error (no versionado)
 ├── login.asp                  # Página de inicio de sesión
 ├── logout.asp                 # Cierre de sesión (invalidación completa)
@@ -141,13 +149,15 @@ webapppolimusicv1_asp/
 
 ## Instrucciones de ejecución
 
-1. Configure IIS y SQL Server según las secciones anteriores.
-2. Copie `config/secrets.asp.example` a `config/secrets.asp` y complete los valores.
-3. Descomprima los recursos del taller en `assets/audio/` y `assets/images/`.
-4. Asegúrese de que la base de datos `BDD` tiene datos en `TBL_USER`, `TBL_SONG`, `TBL_ARTIST`, `TBL_PLAYER`.
-5. Inicie el sitio en IIS.
+1. Ejecute `BDD_PoliMusic.sql` en SQL Server para crear la base de datos y los datos iniciales.
+2. Copie `config/secrets.asp.example` a `config/secrets.asp` y complete los valores (o use los valores por defecto con Windows Authentication).
+3. Coloque los archivos de audio en `assets/audio/` (los MP3 de bensound).
+4. Ejecute `setup_iis.bat` **como Administrador** (crea la aplicación IIS `/webapppolimusicv1_asp`).
+5. Ejecute `move_to_wwwroot.bat` **como Administrador** (copia el proyecto a `C:\inetpub\wwwroot\webapppolimusicv1_asp`, actualiza la ruta física de la aplicación, aplica permisos NTFS con `IIS_IUSRS` e `IUSR`, y reinicia IIS).
 6. Abra `http://localhost/webapppolimusicv1_asp/login.asp` en su navegador.
-7. Inicie sesión con un usuario existente en `TBL_USER`.
+7. Inicie sesión con un usuario de prueba (ver tabla abajo).
+
+> **Verificación rápida:** ejecute `deploy_final.bat` **como Administrador** para sincronizar el proyecto a `wwwroot`, reiniciar IIS y comprobar por HTTP que todas las páginas responden (200/302) sin errores 500.
 
 ### Usuarios de prueba (creados por `BDD_PoliMusic.sql`)
 
@@ -214,11 +224,27 @@ webapppolimusicv1_asp/
 - **Inyección SQL:** Todas las consultas usan `ADODB.Command` con parámetros tipados.
 - **XSS:** Toda salida dinámica se codifica con `Server.HTMLEncode` o funciones de codificación específicas (`EncodeAttr`, `EncodeJS`).
 - **CSRF:** Tokens CSRF validados en el servidor para todas las operaciones de escritura.
-- **Sesiones:** `Session.Abandon` en logout, regeneración de sesión en login (prevención de fijación).
-- **Errores:** Los detalles técnicos se registran en `logs/error_log.txt`; el usuario ve mensajes genéricos.
+- **Sesiones:** `Session.Abandon` en logout; en el login se limpia el estado previo y se rota el token CSRF (`ResetSessionForLogin()`) como mitigación de fijación de sesión. *(Nota: en Classic ASP no es posible regenerar el ID de sesión de forma fiable; se documenta la alternativa aplicada.)*
+- **Errores:** Los detalles técnicos se registran en `logs/error_log.txt`; el usuario ve mensajes genéricos. Los errores detallados de ASP (`scriptErrorSentToBrowser`) deben permanecer **desactivados** en producción.
 - **Rutas:** Validación contra directory traversal (`..` en rutas).
 - **Cabeceras HTTP:** CSP, X-Content-Type-Options, X-Frame-Options, Referrer-Policy.
 - **Principio de mínimo privilegio:** No usar cuentas `sa`; usar usuario con permisos mínimos.
+
+## Verificación estática (herramienta incluida)
+
+El proyecto incluye `tools/asp_parse_check.py`, un verificador que detecta —antes de desplegar— los errores de parseo típicos de Classic ASP:
+
+```bash
+python tools/asp_parse_check.py default.asp login.asp songs.asp logout.asp denied.asp \
+  admin/songs.asp admin/song_create.asp admin/song_edit.asp admin/song_delete.asp
+```
+
+Comprueba:
+1. Caracteres delimitadores ASP (`<%` / `%>`) escritos dentro de cadenas o comentarios (provocan los errores 800a0409 / 800a03f6).
+2. `#INCLUDE FILE` con `..` (IIS lo bloquea → error ASP 0131; por eso se usa `#INCLUDE VIRTUAL`).
+3. Cadenas sin terminar y bloques de script sin cerrar.
+
+Salida esperada: `[ OK ] <página> parses cleanly` para cada archivo.
 
 ## Consideraciones de accesibilidad
 

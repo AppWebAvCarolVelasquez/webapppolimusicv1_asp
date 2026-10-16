@@ -83,8 +83,10 @@ If IsPostRequest() Then
 
                     ' Compare password (supports both plain text and SHA-1 hashed)
                     If VerifyPassword(submittedPassword, dbPassword) Then
-                        ' Regenerate session to prevent session fixation
-                        Call RegenerateSession()
+                        ' Reset session state for the newly authenticated user
+                        ' (clears pre-login contents and issues a new CSRF token,
+                        ' mitigating session fixation).
+                        Call ResetSessionForLogin()
 
                         ' Store session data (do NOT store password)
                         Session("ID_USER")   = dbUserId

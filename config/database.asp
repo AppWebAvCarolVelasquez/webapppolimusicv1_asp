@@ -18,8 +18,10 @@
 '   - Docker SQL Server:     Server=localhost,1433
 '   - Remote server:          Server=192.168.1.100,1433
 '===============================================================
-
-Option Explicit
+' NOTE: Option Explicit is declared in the PAGES that include this
+' file, NOT here - declaring it in an included file would duplicate
+' it after the #INCLUDE merge and break VBScript compilation.
+'===============================================================
 
 ' --- Database configuration variables ---
 Dim DB_SERVER, DB_NAME, DB_USER, DB_PASS, DB_USE_WINDOWS_AUTH
@@ -46,13 +48,20 @@ If fso.FileExists(secretsPath) Then
     ts.Close
     Set ts = Nothing
     If Len(secretsContent) > 0 Then
-        ' Remove ASP delimiters before executing
-        secretsContent = Replace(secretsContent, "<%" & vbCrLf, "")
-        secretsContent = Replace(secretsContent, "<%" & vbCr, "")
-        secretsContent = Replace(secretsContent, "<%" & vbLf, "")
-        secretsContent = Replace(secretsContent, "<%", "")
-        secretsContent = Replace(secretsContent, vbCrLf & "%>", "")
-        secretsContent = Replace(secretsContent, "%>", "")
+        ' Remove ASP delimiters before executing.
+        ' IMPORTANT: the ASP opening and closing delimiters MUST be built
+        ' by concatenation (as done below). Writing them literally inside a
+        ' string OR inside a comment would make the IIS ASP parser treat
+        ' them as real delimiters: it terminates/restarts the script block
+        ' at those characters, splitting the statement and causing VBScript
+        ' compilation errors (800a0409 / 800a03f6) on every page that
+        ' includes this file. Never write those two characters literally.
+        secretsContent = Replace(secretsContent, "<" & "%" & vbCrLf, "")
+        secretsContent = Replace(secretsContent, "<" & "%" & vbCr, "")
+        secretsContent = Replace(secretsContent, "<" & "%" & vbLf, "")
+        secretsContent = Replace(secretsContent, "<" & "%", "")
+        secretsContent = Replace(secretsContent, vbCrLf & "%" & ">", "")
+        secretsContent = Replace(secretsContent, "%" & ">", "")
         ExecuteGlobal secretsContent
     End If
     On Error GoTo 0

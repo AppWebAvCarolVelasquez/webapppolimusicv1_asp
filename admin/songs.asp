@@ -9,9 +9,9 @@
 ' Protected by server-side authentication AND admin role check.
 '===============================================================
 %>
-<!-- #INCLUDE FILE="../config/database.asp" -->
-<!-- #INCLUDE FILE="../includes/functions.asp" -->
-<!-- #INCLUDE FILE="../includes/security.asp" -->
+<!-- #INCLUDE VIRTUAL="/webapppolimusicv1_asp/config/database.asp" -->
+<!-- #INCLUDE VIRTUAL="/webapppolimusicv1_asp/includes/functions.asp" -->
+<!-- #INCLUDE VIRTUAL="/webapppolimusicv1_asp/includes/security.asp" -->
 <%
 ' Enforce authentication + admin role on the SERVER
 Call RequireAdmin()
@@ -105,7 +105,7 @@ End If
 
 csrfToken = EnsureCSRFToken()
 %>
-<!-- #INCLUDE FILE="../includes/header.asp" -->
+<!-- #INCLUDE VIRTUAL="/webapppolimusicv1_asp/includes/header.asp" -->
 
             <main id="main-content" class="content-area" role="main">
                 <div class="content-inner">
@@ -193,4 +193,4 @@ csrfToken = EnsureCSRFToken()
                 </div>
             </main>
 
-<!-- #INCLUDE FILE="../includes/footer.asp" -->
+<!-- #INCLUDE VIRTUAL="/webapppolimusicv1_asp/includes/footer.asp" -->
