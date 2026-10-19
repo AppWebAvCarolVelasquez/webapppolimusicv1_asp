@@ -219,6 +219,45 @@ webapppolimusicv1_asp/
 6. Use un lector de pantalla (NVDA) para recorrer cada flujo.
 7. Verifique que las alertas se anuncien (`role="alert"`, `aria-live`).
 
+## Diseño responsive
+
+La interfaz se adapta a cuatro rangos de pantalla (media queries en `assets/css/styles.css`):
+
+| Rango | Comportamiento |
+|---|---|
+| **> 1024px** (escritorio) | Barra lateral fija de 240px y tabla de canciones clásica. |
+| **769–1024px** (tablet) | La barra lateral pasa a ser un *drawer* fuera de pantalla que se abre con el botón ☰. La tabla se compacta (menos padding, reproductor más estrecho). |
+| **≤ 768px** (móvil) | **Las tablas se convierten en tarjetas**: cada fila es una tarjeta con pares etiqueta/valor (`data-label`), el reproductor ocupa todo el ancho y las acciones se apilan. |
+| **≤ 480px** | Buscador y botones de acción a ancho completo. |
+| **≤ 380px** | Etiqueta y valor se apilan verticalmente dentro de cada tarjeta. |
+
+Detalles de implementación:
+
+- **Menú accesible** (`assets/js/main.js`): bloqueo del scroll de fondo, capa oscura (`sidebar-backdrop`), cierre con `Escape`, con clic fuera o al elegir un destino; el foco entra al menú al abrirlo y vuelve al botón al cerrarlo; `inert` evita que los enlaces ocultos reciban tabulación.
+- **Sin desbordamiento horizontal:** verificado a 320, 390, 820 y 1440px (`scrollWidth === innerWidth`).
+- **Áreas táctiles de 44×44px** en pantallas táctiles (`@media (pointer: coarse)`).
+- **`viewport-fit=cover` + `env(safe-area-inset-*)`** para móviles con notch, y `100dvh` para que la barra del navegador no recorte el layout.
+- **Campos a 16px en móvil** para evitar el zoom automático de iOS al enfocar.
+- **Roles ARIA explícitos** (`table`/`row`/`cell`) para que las tablas conserven su semántica cuando el CSS cambia su `display`.
+
+### Vista previa sin IIS
+
+`tools/preview/` contiene réplicas estáticas de **todas** las vistas que usan el CSS real:
+
+| Archivo | Vista que replica |
+|---|---|
+| `preview-login.html` | `login.asp` |
+| `preview-songs.html` | `songs.asp` |
+| `preview-admin.html` | `admin/songs.asp` |
+| `preview-form.html` | `admin/song_create.asp` y `admin/song_edit.asp` |
+| `preview-delete.html` | `admin/song_delete.asp` |
+| `preview-denied.html` | `denied.asp` |
+| `preview-drawer.html` | Menú lateral abierto |
+
+Ábralos en el navegador y redimensione la ventana (o use el modo dispositivo de DevTools). `frame.html?src=<archivo>&w=390&h=2000` carga una vista dentro de un iframe del ancho exacto indicado.
+
+`tools/preview/shots/` contiene capturas de referencia a 320, 390, 820 y 1440px, incluida la comprobación de desbordamiento (`check-320.png` y `check-768.png`). Para regenerar esa comprobación: `python tools/preview/overflow_check.py` y luego abra `check-stack.html`.
+
 ## Consideraciones de seguridad
 
 - **Inyección SQL:** Todas las consultas usan `ADODB.Command` con parámetros tipados.
@@ -254,7 +293,7 @@ Consulte `docs/ACCESSIBILITY.md` para el detalle completo. Resumen:
 - HTML semántico, ARIA cuando es necesario.
 - Contraste de color verificado (mínimo 4.5:1 para texto).
 - Navegación por teclado completa, foco visible, skip link.
-- Diseño responsive con reflujo a 320px.
+- Diseño responsive con reflujo verificado a 320px (tablas en tarjetas y menú lateral tipo *drawer*).
 - `prefers-reduced-motion` respetado.
 - Reproductor nativo `<audio controls>` accesible.
 

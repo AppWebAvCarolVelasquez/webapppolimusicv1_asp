@@ -38,11 +38,15 @@ aplicación PoliMusic.
 
 ### 1.4 Redimensionamiento y reflujo (1.4.4, 1.4.10, 1.4.12)
 - **Zoom al 200%:** La tipografía usa unidades `rem` y `em`; el diseño fluye sin desbordamiento.
-- **Reflujo a 320px CSS:** Media queries a 640px y 1024px ajustan el layout:
-  - La barra lateral se oculta y se reemplaza con un botón de menú.
-  - Las tablas permiten scroll horizontal.
-  - Los formularios se apilan verticalmente.
-- **Estado:** Implementado. Pendiente: pruebas con herramientas reales.
+- **Reflujo a 320px CSS:** Media queries a 1024px, 768px, 480px y 380px ajustan el layout:
+  - La barra lateral se convierte en un *drawer* fuera de pantalla, con botón ☰, capa oscura y cierre con `Escape`.
+  - Las tablas se transforman en tarjetas apiladas (etiqueta/valor mediante `data-label`), **sin scroll horizontal**.
+  - Los formularios, el buscador y las acciones se apilan verticalmente.
+  - El reproductor de audio ocupa el ancho completo de la tarjeta.
+  - En pantallas de 380px o menos, la etiqueta y el valor se apilan en vertical.
+- **Sin desplazamiento horizontal:** verificado en las **6 vistas** (login, songs, admin/songs, song_create, song_delete, denied) a **320px** y **768px** con `document.documentElement.scrollWidth === window.innerWidth`. Capturas en `tools/preview/shots/check-320.png` y `check-768.png`.
+- **Áreas táctiles:** 44×44px en dispositivos con puntero grueso (`@media (pointer: coarse)`), por encima del mínimo de 24×24 de WCAG 2.2.
+- **Estado:** Implementado y verificado con capturas en `tools/preview/shots/`.
 
 ### 1.5 Reducción de movimiento (2.3.3)
 - Se respeta `@media (prefers-reduced-motion: reduce)`:
@@ -161,7 +165,7 @@ aplicación PoliMusic.
 | Navegación con teclado (manual) | Prueba manual | Pendiente |
 | Pruebas con lector de pantalla | NVDA / JAWS | Pendiente |
 | Zoom al 200% en navegador | Chrome/Firefox | Pendiente |
-| Reflujo a 320px en navegador | Chrome DevTools | Pendiente |
+| Reflujo a 320px en navegador | Chrome headless (capturas en `tools/preview/shots/`) | Verificado |
 | Foco visible (manual) | Prueba con Tab | Pendiente |
 | Reproductor (manual) | Prueba de teclado | Pendiente |
 | Diálogos de confirmación | Prueba manual | Pendiente |

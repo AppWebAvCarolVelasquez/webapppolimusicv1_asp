@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+    <meta name="color-scheme" content="dark">
+    <meta name="theme-color" content="#0d0d12">
+    <title>Song List - PoliMusic</title>
+    <link rel="stylesheet" href="../../assets/css/styles.css">
+</head>
+<body>
+    <a href="#main-content" class="skip-link">Saltar al contenido principal</a>
+
+    <div class="app-layout">
+        <aside class="sidebar" id="sidebar" aria-label="Navegacion principal">
+            <div class="sidebar-header">
+                <a href="#" class="logo-link"><span class="logo-text">PoliMusic</span></a>
+            </div>
+            <nav class="sidebar-nav" aria-label="Menu de navegacion">
+                <ul class="nav-list">
+                    <li class="nav-item">
+                        <a href="#" class="nav-link" aria-current="page">
+                            <span class="nav-icon" aria-hidden="true">&#9835;</span>
+                            <span>Canciones</span>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="#" class="nav-link">
+                            <span class="nav-icon" aria-hidden="true">&#9881;</span>
+                            <span>Administrar</span>
+                        </a>
+                    </li>
+                </ul>
+            </nav>
+            <div class="sidebar-footer">
+                <div class="user-info">
+                    <span class="user-label"><span class="user-icon" aria-hidden="true">&#9679;</span> userAdmin</span>
+                    <span class="user-role badge badge-admin">Admin</span>
+                </div>
+                <a href="#" class="btn btn-logout btn-full">Cerrar Sesion</a>
+            </div>
+        </aside>
+
+        <div class="sidebar-backdrop" id="sidebarBackdrop" aria-hidden="true"></div>
+
+        <button type="button" class="menu-toggle" id="menuToggle" aria-expanded="false" aria-controls="sidebar" aria-label="Abrir menu de navegacion">
+            <span class="menu-toggle-icon" aria-hidden="true">&#9776;</span>
+        </button>
+
+        <div class="main-area">
+            <header class="top-bar" role="banner">
+                <h1 class="page-heading">Song List</h1>
+            </header>
+
+            <main id="main-content" class="content-area" role="main">
+                <div class="content-inner">
+                    <div class="welcome-banner">
+                        <p class="welcome-text">Bienvenido(a), <strong>userAdmin</strong></p>
+                    </div>
+
+                    <form method="get" action="#" class="search-form" role="search">
+                        <div class="search-group">
+                            <input type="search" id="search-q" name="q" placeholder="Buscar por cancion o artista..." class="search-input">
+                            <button type="submit" class="btn btn-search">
+                                <span aria-hidden="true">&#128269;</span> Buscar
+                            </button>
+                        </div>
+                    </form>
+
+                    <div class="admin-actions">
+                        <a href="#" class="btn btn-admin"><span aria-hidden="true">&#9881;</span> Gestionar Canciones</a>
+                    </div>
+
+                    <h2 class="section-heading" id="song-list-heading">Song List</h2>
+
+                    <div class="table-container" role="region" aria-labelledby="song-list-heading" tabindex="0">
+                        <table class="songs-table" role="table">
+                            <caption class="sr-only">Lista de canciones disponibles en PoliMusic</caption>
+                            <thead role="rowgroup">
+                                <tr role="row">
+                                    <th scope="col" role="columnheader">#</th>
+                                    <th scope="col" role="columnheader">Cancion</th>
+                                    <th scope="col" role="columnheader">Artista(s)</th>
+                                    <th scope="col" role="columnheader">Reproducciones</th>
+                                    <th scope="col" role="columnheader">Reproductor</th>
+                                    <th scope="col" role="columnheader">Acciones</th>
+                                </tr>
+                            </thead>
+                            <tbody role="rowgroup">
+                                <tr role="row">
+                                    <td class="song-index" role="cell" data-label="#">1</td>
+                                    <td class="song-name" role="cell"><span>Adventure</span></td>
+                                    <td class="song-artists" role="cell" data-label="Artista(s)">Juan Gabriel, Ana Gabriel</td>
+                                    <td class="song-plays" role="cell" data-label="Reproducciones">12</td>
+                                    <td class="song-player" role="cell" data-label="Reproductor">
+                                        <audio controls preload="none" class="audio-player" aria-label="Reproductor de: Adventure">
+                                            <source src="../../assets/audio/bensound-adventure.mp3" type="audio/mpeg">
+                                        </audio>
+                                    </td>
+                                    <td class="song-actions" role="cell">
+                                        <a href="#" class="btn btn-sm btn-edit">Editar</a>
+                                        <a href="#" class="btn btn-sm btn-delete">Eliminar</a>
+                                    </td>
+                                </tr>
+                                <tr role="row">
+                                    <td class="song-index" role="cell" data-label="#">2</td>
+                                    <td class="song-name" role="cell"><span>Dreams</span></td>
+                                    <td class="song-artists" role="cell" data-label="Artista(s)">Juan Gabriel, Ana Gabriel</td>
+                                    <td class="song-plays" role="cell" data-label="Reproducciones">7</td>
+                                    <td class="song-player" role="cell" data-label="Reproductor">
+                                        <audio controls preload="none" class="audio-player" aria-label="Reproductor de: Dreams">
+                                            <source src="../../assets/audio/bensound-dreams.mp3" type="audio/mpeg">
+                                        </audio>
+                                    </td>
+                                    <td class="song-actions" role="cell">
+                                        <a href="#" class="btn btn-sm btn-edit">Editar</a>
+                                        <a href="#" class="btn btn-sm btn-delete">Eliminar</a>
+                                    </td>
+                                </tr>
+                                <tr role="row">
+                                    <td class="song-index" role="cell" data-label="#">3</td>
+                                    <td class="song-name" role="cell"><span>Energy</span></td>
+                                    <td class="song-artists" role="cell" data-label="Artista(s)">Juan Gabriel, Mariah Carey</td>
+                                    <td class="song-plays" role="cell" data-label="Reproducciones">3</td>
+                                    <td class="song-player" role="cell" data-label="Reproductor">
+                                        <audio controls preload="none" class="audio-player" aria-label="Reproductor de: Energy">
+                                            <source src="../../assets/audio/bensound-energy.mp3" type="audio/mpeg">
+                                        </audio>
+                                    </td>
+                                    <td class="song-actions" role="cell">
+                                        <a href="#" class="btn btn-sm btn-edit">Editar</a>
+                                        <a href="#" class="btn btn-sm btn-delete">Eliminar</a>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </main>
+        </div>
+    </div>
+
+    <footer class="app-footer" role="contentinfo">
+        <p>PoliMusic &copy; 2025 - Taller de Aplicaciones Web Avanzadas</p>
+    </footer>
+
+    <script src="../../assets/js/main.js"></script>
+</body>
+</html>

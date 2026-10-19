@@ -14,8 +14,10 @@
 <html lang="es">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
     <meta name="description" content="PoliMusic - Plataforma de musica universitaria">
+    <meta name="color-scheme" content="dark">
+    <meta name="theme-color" content="#0d0d12">
     <title><%= Encode(pageTitle) %> - PoliMusic</title>
     <link rel="stylesheet" href="<%= GetAppPath() %>/assets/css/styles.css">
 </head>
@@ -68,8 +70,18 @@
             </div>
         </aside>
 
+        <!-- Backdrop shown behind the off-canvas sidebar (mobile/tablet) -->
+        <div class="sidebar-backdrop" id="sidebarBackdrop" aria-hidden="true"></div>
+
         <!-- Mobile menu toggle -->
-        <button class="menu-toggle" id="menuToggle" aria-expanded="false" aria-controls="sidebar" aria-label="Abrir menu de navegacion">
+        <button
+            type="button"
+            class="menu-toggle"
+            id="menuToggle"
+            aria-expanded="false"
+            aria-controls="sidebar"
+            aria-label="Abrir menu de navegacion"
+        >
             <span class="menu-toggle-icon" aria-hidden="true">&#9776;</span>
         </button>
 

@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<title>Overflow check (320px)</title>
+<style>
+  html, body { margin: 0; padding: 0; background: #222; }
+  .cell { margin: 0 0 4px 0; }
+  .cell h2 { margin: 0; padding: 2px 6px; font: 13px monospace; color: #fff; background: #444; }
+  iframe { display: block; border: 0; background: #0d0d12; }
+</style>
+</head>
+<body>
+  <div class="cell"><h2>login</h2><iframe src="chk-login.html" width="320" height="70"></iframe></div>
+  <div class="cell"><h2>denied</h2><iframe src="chk-denied.html" width="320" height="70"></iframe></div>
+  <div class="cell"><h2>songs</h2><iframe src="chk-songs.html" width="320" height="70"></iframe></div>
+  <div class="cell"><h2>admin/songs</h2><iframe src="chk-admin.html" width="320" height="70"></iframe></div>
+  <div class="cell"><h2>song_create</h2><iframe src="chk-form.html" width="320" height="70"></iframe></div>
+  <div class="cell"><h2>song_delete</h2><iframe src="chk-delete.html" width="320" height="70"></iframe></div>
+</body>
+</html>

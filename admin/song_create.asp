@@ -235,8 +235,11 @@ csrfToken = EnsureCSRFToken()
 
                     <% If validationErrors <> "" Then %>
                         <div class="alert alert-error" role="alert" aria-live="assertive">
-                            <p>Se detectaron los siguientes errores:</p>
-                            <ul><%= validationErrors %></ul>
+                            <span class="alert-icon" aria-hidden="true">!</span>
+                            <div class="alert-body">
+                                <p>Se detectaron los siguientes errores:</p>
+                                <ul><%= validationErrors %></ul>
+                            </div>
                         </div>
                     <% End If %>
 

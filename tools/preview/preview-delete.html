@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+    <meta name="color-scheme" content="dark">
+    <meta name="theme-color" content="#0d0d12">
+    <title>Eliminar Cancion - PoliMusic</title>
+    <link rel="stylesheet" href="../../assets/css/styles.css">
+</head>
+<body>
+    <a href="#main-content" class="skip-link">Saltar al contenido principal</a>
+
+    <div class="app-layout">
+        <aside class="sidebar" id="sidebar" aria-label="Navegacion principal">
+            <div class="sidebar-header">
+                <a href="#" class="logo-link"><span class="logo-text">PoliMusic</span></a>
+            </div>
+            <nav class="sidebar-nav" aria-label="Menu de navegacion">
+                <ul class="nav-list">
+                    <li class="nav-item">
+                        <a href="#" class="nav-link"><span class="nav-icon" aria-hidden="true">&#9835;</span><span>Canciones</span></a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="#" class="nav-link" aria-current="page"><span class="nav-icon" aria-hidden="true">&#9881;</span><span>Administrar</span></a>
+                    </li>
+                </ul>
+            </nav>
+            <div class="sidebar-footer">
+                <div class="user-info">
+                    <span class="user-label"><span class="user-icon" aria-hidden="true">&#9679;</span> userAdmin</span>
+                    <span class="user-role badge badge-admin">Admin</span>
+                </div>
+                <a href="#" class="btn btn-logout btn-full">Cerrar Sesion</a>
+            </div>
+        </aside>
+
+        <div class="sidebar-backdrop" id="sidebarBackdrop" aria-hidden="true"></div>
+
+        <button type="button" class="menu-toggle" id="menuToggle" aria-expanded="false" aria-controls="sidebar" aria-label="Abrir menu de navegacion">
+            <span class="menu-toggle-icon" aria-hidden="true">&#9776;</span>
+        </button>
+
+        <div class="main-area">
+            <header class="top-bar" role="banner">
+                <h1 class="page-heading">Eliminar Cancion</h1>
+            </header>
+
+            <main id="main-content" class="content-area" role="main">
+                <div class="content-inner">
+                    <h2 class="section-heading">Eliminar Cancion</h2>
+
+                    <div class="delete-confirmation">
+                        <div class="alert alert-warning" role="status" aria-live="polite">
+                            <strong>Esta a punto de eliminar la siguiente cancion:</strong>
+                        </div>
+
+                        <table class="info-table" role="table" aria-label="Detalles de la cancion a eliminar">
+                            <tbody role="rowgroup">
+                                <tr role="row">
+                                    <th scope="row" role="rowheader">ID:</th>
+                                    <td role="cell">1</td>
+                                </tr>
+                                <tr role="row">
+                                    <th scope="row" role="rowheader">Nombre:</th>
+                                    <td role="cell">Adventure</td>
+                                </tr>
+                                <tr role="row">
+                                    <th scope="row" role="rowheader">Artista(s):</th>
+                                    <td role="cell">Juan Gabriel, Ana Gabriel</td>
+                                </tr>
+                                <tr role="row">
+                                    <th scope="row" role="rowheader">Ruta:</th>
+                                    <td role="cell">~/songFiles/bensound-adventure.mp3</td>
+                                </tr>
+                                <tr role="row">
+                                    <th scope="row" role="rowheader">Reproducciones:</th>
+                                    <td role="cell">12</td>
+                                </tr>
+                            </tbody>
+                        </table>
+
+                        <div class="dependency-info" role="region" aria-label="Dependencias de la cancion">
+                            <h3>Dependencias que se eliminaran:</h3>
+                            <ul>
+                                <li>Asociaciones con artistas (TBL_PLAYER): 2</li>
+                                <li>Asociaciones con albumes (TBL_TRACKLIST): 0</li>
+                                <li>Asociaciones con playlists (TBL_PLAYLIST_SONG): 0</li>
+                            </ul>
+                            <p class="form-help">
+                                <strong>Nota:</strong> Los artistas, albumes y playlists NO se eliminaran.
+                                Solo se eliminaran las asociaciones con esta cancion y la cancion misma.
+                            </p>
+                        </div>
+
+                        <form method="post" action="#" class="admin-form" novalidate>
+                            <input type="hidden" name="csrf_token" value="token">
+
+                            <div class="form-group form-checkbox-group">
+                                <input type="checkbox" id="confirm" name="confirm" value="yes" required
+                                       class="form-checkbox" aria-required="true" aria-describedby="confirm_help">
+                                <div class="form-checkbox-body">
+                                    <label for="confirm" class="form-label-inline">
+                                        Si, deseo eliminar la cancion "Adventure" permanentemente.
+                                    </label>
+                                    <p id="confirm_help" class="form-help">
+                                        Esta accion no se puede deshacer.
+                                    </p>
+                                </div>
+                            </div>
+
+                            <div class="form-actions">
+                                <button type="submit" class="btn btn-danger">
+                                    <span aria-hidden="true">&#128465;</span>
+                                    Eliminar Definitivamente
+                                </button>
+                                <a href="#" class="btn btn-secondary">Cancelar</a>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </main>
+        </div>
+    </div>
+
+    <footer class="app-footer" role="contentinfo">
+        <p>PoliMusic &copy; 2025 - Taller de Aplicaciones Web Avanzadas</p>
+    </footer>
+
+    <script src="../../assets/js/main.js"></script>
+</body>
+</html>

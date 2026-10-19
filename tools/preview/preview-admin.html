@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+    <meta name="color-scheme" content="dark">
+    <meta name="theme-color" content="#0d0d12">
+    <title>Administrar Canciones - PoliMusic</title>
+    <link rel="stylesheet" href="../../assets/css/styles.css">
+</head>
+<body>
+    <a href="#main-content" class="skip-link">Saltar al contenido principal</a>
+
+    <div class="app-layout">
+        <aside class="sidebar" id="sidebar" aria-label="Navegacion principal">
+            <div class="sidebar-header">
+                <a href="#" class="logo-link"><span class="logo-text">PoliMusic</span></a>
+            </div>
+            <nav class="sidebar-nav" aria-label="Menu de navegacion">
+                <ul class="nav-list">
+                    <li class="nav-item">
+                        <a href="#" class="nav-link"><span class="nav-icon" aria-hidden="true">&#9835;</span><span>Canciones</span></a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="#" class="nav-link" aria-current="page"><span class="nav-icon" aria-hidden="true">&#9881;</span><span>Administrar</span></a>
+                    </li>
+                </ul>
+            </nav>
+            <div class="sidebar-footer">
+                <div class="user-info">
+                    <span class="user-label"><span class="user-icon" aria-hidden="true">&#9679;</span> userAdmin</span>
+                    <span class="user-role badge badge-admin">Admin</span>
+                </div>
+                <a href="#" class="btn btn-logout btn-full">Cerrar Sesion</a>
+            </div>
+        </aside>
+
+        <div class="sidebar-backdrop" id="sidebarBackdrop" aria-hidden="true"></div>
+
+        <button type="button" class="menu-toggle" id="menuToggle" aria-expanded="false" aria-controls="sidebar" aria-label="Abrir menu de navegacion">
+            <span class="menu-toggle-icon" aria-hidden="true">&#9776;</span>
+        </button>
+
+        <div class="main-area">
+            <header class="top-bar" role="banner">
+                <h1 class="page-heading">Administrar Canciones</h1>
+            </header>
+
+            <main id="main-content" class="content-area" role="main">
+                <div class="content-inner">
+                    <div class="admin-header">
+                        <h2 class="section-heading">Gestion de Canciones</h2>
+                        <a href="#" class="btn btn-create"><span aria-hidden="true">+</span> Nueva Cancion</a>
+                    </div>
+
+                    <div class="alert alert-success" role="status">
+                        La cancion se creo correctamente.
+                    </div>
+
+                    <div class="table-container" role="region" aria-label="Tabla de canciones administrativas" tabindex="0">
+                        <table class="songs-table admin-table" role="table">
+                            <caption class="sr-only">Lista administrativa de canciones</caption>
+                            <thead role="rowgroup">
+                                <tr role="row">
+                                    <th scope="col" role="columnheader">ID</th>
+                                    <th scope="col" role="columnheader">Cancion</th>
+                                    <th scope="col" role="columnheader">Artista(s)</th>
+                                    <th scope="col" role="columnheader">Ruta</th>
+                                    <th scope="col" role="columnheader">Reproduc.</th>
+                                    <th scope="col" role="columnheader">Albumes</th>
+                                    <th scope="col" role="columnheader">Playlists</th>
+                                    <th scope="col" role="columnheader">Acciones</th>
+                                </tr>
+                            </thead>
+                            <tbody role="rowgroup">
+                                <tr role="row">
+                                    <td class="col-id" role="cell" data-label="ID">1</td>
+                                    <td class="song-name" role="cell">Adventure</td>
+                                    <td class="song-artists" role="cell" data-label="Artista(s)">Juan Gabriel, Ana Gabriel</td>
+                                    <td class="path-cell" role="cell" data-label="Ruta" title="~/songFiles/bensound-adventure.mp3">~/songFiles/bensound-adventure...</td>
+                                    <td class="song-plays" role="cell" data-label="Reproducciones">12</td>
+                                    <td class="col-count" role="cell" data-label="Albumes">0</td>
+                                    <td class="col-count" role="cell" data-label="Playlists">0</td>
+                                    <td class="admin-row-actions" role="cell">
+                                        <a href="#" class="btn btn-sm btn-edit">Editar</a>
+                                        <a href="#" class="btn btn-sm btn-delete">Eliminar</a>
+                                    </td>
+                                </tr>
+                                <tr role="row">
+                                    <td class="col-id" role="cell" data-label="ID">2</td>
+                                    <td class="song-name" role="cell">Dreams</td>
+                                    <td class="song-artists" role="cell" data-label="Artista(s)">Juan Gabriel, Ana Gabriel</td>
+                                    <td class="path-cell" role="cell" data-label="Ruta" title="~/songFiles/bensound-dreams.mp3">~/songFiles/bensound-dreams.mp3</td>
+                                    <td class="song-plays" role="cell" data-label="Reproducciones">7</td>
+                                    <td class="col-count" role="cell" data-label="Albumes">0</td>
+                                    <td class="col-count" role="cell" data-label="Playlists">1</td>
+                                    <td class="admin-row-actions" role="cell">
+                                        <a href="#" class="btn btn-sm btn-edit">Editar</a>
+                                        <a href="#" class="btn btn-sm btn-delete">Eliminar</a>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <div class="admin-nav-links">
+                        <a href="#" class="btn btn-secondary">Volver a Song List</a>
+                    </div>
+                </div>
+            </main>
+        </div>
+    </div>
+
+    <footer class="app-footer" role="contentinfo">
+        <p>PoliMusic &copy; 2025 - Taller de Aplicaciones Web Avanzadas</p>
+    </footer>
+
+    <script src="../../assets/js/main.js"></script>
+</body>
+</html>

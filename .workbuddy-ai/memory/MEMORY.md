@@ -25,6 +25,22 @@
 - logout.asp correctly uses Session.Abandon (there we DO want destruction) and reads the real ASPSESSIONID cookie name from HTTP_COOKIE instead of hardcoding it
 - Delete operations: child records (TBL_PLAYER, TBL_TRACKLIST, TBL_PLAYLIST_SONG) deleted first, then TBL_SONG
 
+## Responsive Design (session 8)
+- Breakpoints: **1024px** (sidebar → off-canvas drawer), **768px** (tables → cards), **480px** (full-width controls), **380px** (label/value stacked), plus landscape-phone, `pointer: coarse` (44px targets) and `min-width: 1440px`.
+- Sidebar drawer: `.sidebar-backdrop` overlay + `body.nav-open { overflow: hidden }`; `.sidebar-header` has `padding-left` in drawer mode so the ☰ button never covers the "PoliMusic" logo. JS in `assets/js/main.js`: focus moves into the drawer on open, returns to the toggle on close, closes on `Escape`/backdrop/link click, resets on resize & orientationchange, and sets `inert` while closed.
+- Tables become cards via `td::before { content: attr(data-label) }`. **Each `td` MUST keep `data-label`** and the table keeps explicit `role="table"/"row"/"cell"` because `display:block` drops implicit table semantics.
+- Inputs are forced to 16px on mobile to stop iOS auto-zoom (do not lower `--font-size-base` below 16px again).
+- `denied.asp` must NOT emit its own doctype/head/body/scripts — `header.asp`/`footer.asp` already do it (it had them duplicated until session 8).
+- `.alert` and `.form-checkbox-group` are flex rows: **any multi-block content inside them must be wrapped** in `.alert-body` / `.form-checkbox-body`, otherwise the blocks render side by side as columns (fixed in song_create/song_edit/song_delete).
+
+## Visual verification tooling
+- `tools/preview/` holds static replicas of **all 6 views** (`preview-login`, `preview-songs`, `preview-admin`, `preview-form`, `preview-delete`, `preview-denied`, plus `preview-drawer`) linking the real `styles.css`, plus `frame.html` which loads a page inside an iframe of an exact width.
+- Overflow check: `python tools/preview/overflow_check.py` generates `chk-*.html` probes, then screenshot `check-stack.html` (6 vertically stacked iframes at a fixed width). Result recorded at 320px and 768px: all views `iw == sw`. Horizontal row layout and `postMessage` harness both fail on `file://` — use the vertical stack.
+- **Chrome headless on Windows enforces a 500px minimum window width**, so `--window-size=390` yields `innerWidth=500`. Always screenshot through `frame.html?src=...&w=390&h=2400` instead.
+- Command used: `chrome --headless=new --disable-gpu --no-sandbox --hide-scrollbars --force-device-scale-factor=1 --user-data-dir=/tmp/x --window-size=420,900 --screenshot=out.png "file:///.../frame.html?src=preview-songs.html&w=390&h=2400"`. Chrome sometimes needs a retry / fresh `--user-data-dir`; delete the target PNG first.
+- Reference screenshots at 320/390/820/1440px live in `tools/preview/shots/`.
+- `deploy_final.bat` MUST robocopy `assets\css` and `assets\js` too — it originally only synced config/includes/admin, so CSS/JS changes never reached wwwroot.
+
 ## Classic ASP Hard-Won Lessons (IIS parse-time)
 - **NEVER write the characters `<` `%` or `%` `>` ANYWHERE in an .asp file except as real block delimiters** — including inside VBScript string literals **AND inside `'` comments**. The IIS ASP tokenizer is delimiter-based, NOT string-aware and NOT comment-aware. It sees them mid-line, terminates/restarts the script block there, and splits the statement → unterminated string (800a0409) or unbalanced block (800a03f6) on every page that includes the file. Build them by concatenation when a literal value is genuinely needed: `"<" & "%"`, `"%" & ">"` (see config/database.asp). To *describe* them in a comment, spell them out in words ("ASP opening/closing delimiters") — never paste the raw characters.
 - The same applies to an explanatory comment ABOUT the bug: the first fix for database.asp failed because the comment itself contained the literal `<%` and `%>` (error changed 800a0409 → 800a03f6). Lesson learned and documented.

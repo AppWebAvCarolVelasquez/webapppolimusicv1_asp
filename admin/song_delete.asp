@@ -232,27 +232,29 @@ csrfToken = EnsureCSRFToken()
                             <strong>Esta a punto de eliminar la siguiente cancion:</strong>
                         </div>
 
-                        <table class="info-table" aria-label="Detalles de la cancion a eliminar">
-                            <tbody>
-                                <tr>
-                                    <th scope="row">ID:</th>
-                                    <td><%= Encode(songId) %></td>
+                        <%' Explicit roles keep the table semantics when CSS stacks
+                          ' the label/value pairs on small screens (display: block) %>
+                        <table class="info-table" role="table" aria-label="Detalles de la cancion a eliminar">
+                            <tbody role="rowgroup">
+                                <tr role="row">
+                                    <th scope="row" role="rowheader">ID:</th>
+                                    <td role="cell"><%= Encode(songId) %></td>
                                 </tr>
-                                <tr>
-                                    <th scope="row">Nombre:</th>
-                                    <td><%= Encode(songName) %></td>
+                                <tr role="row">
+                                    <th scope="row" role="rowheader">Nombre:</th>
+                                    <td role="cell"><%= Encode(songName) %></td>
                                 </tr>
-                                <tr>
-                                    <th scope="row">Artista(s):</th>
-                                    <td><%= Encode(artistsStr) %></td>
+                                <tr role="row">
+                                    <th scope="row" role="rowheader">Artista(s):</th>
+                                    <td role="cell"><%= Encode(artistsStr) %></td>
                                 </tr>
-                                <tr>
-                                    <th scope="row">Ruta:</th>
-                                    <td><%= Encode(songPath) %></td>
+                                <tr role="row">
+                                    <th scope="row" role="rowheader">Ruta:</th>
+                                    <td role="cell"><%= Encode(songPath) %></td>
                                 </tr>
-                                <tr>
-                                    <th scope="row">Reproducciones:</th>
-                                    <td><%= Encode(songPlays) %></td>
+                                <tr role="row">
+                                    <th scope="row" role="rowheader">Reproducciones:</th>
+                                    <td role="cell"><%= Encode(songPlays) %></td>
                                 </tr>
                             </tbody>
                         </table>
@@ -284,12 +286,14 @@ csrfToken = EnsureCSRFToken()
                                     aria-required="true"
                                     aria-describedby="confirm_help"
                                 >
-                                <label for="confirm" class="form-label-inline">
-                                    Si, deseo eliminar la cancion "<%= Encode(songName) %>" permanentemente.
-                                </label>
-                                <p id="confirm_help" class="form-help">
-                                    Esta accion no se puede deshacer.
-                                </p>
+                                <div class="form-checkbox-body">
+                                    <label for="confirm" class="form-label-inline">
+                                        Si, deseo eliminar la cancion "<%= Encode(songName) %>" permanentemente.
+                                    </label>
+                                    <p id="confirm_help" class="form-help">
+                                        Esta accion no se puede deshacer.
+                                    </p>
+                                </div>
                             </div>
 
                             <div class="form-actions">

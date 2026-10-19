@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="utf-8">
+    <title>Preview frame</title>
+    <style>
+        html, body { margin: 0; padding: 0; background: #4a4a55; }
+        iframe { display: block; border: 0; background: #0d0d12; }
+    </style>
+</head>
+<body>
+    <iframe id="frame" src="preview-songs.html" width="390" height="2400"></iframe>
+    <script>
+        // Lets us render a page inside an exact CSS viewport:
+        // frame.html?src=preview-songs.html&w=390&h=2400
+        var params = new URLSearchParams(window.location.search);
+        var frame = document.getElementById('frame');
+        frame.src = params.get('src') || 'preview-songs.html';
+        frame.width = params.get('w') || '390';
+        frame.height = params.get('h') || '2400';
+    </script>
+</body>
+</html>

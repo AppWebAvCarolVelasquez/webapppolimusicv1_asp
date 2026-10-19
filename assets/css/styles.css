@@ -84,6 +84,12 @@
 
     /* Target size (WCAG 2.2 - min 24x24px) */
     --target-min: 24px;
+
+    /* Comfortable touch target for phones/tablets (WCAG 2.5.5 AAA / iOS HIG) */
+    --touch-target: 44px;
+
+    /* Off-canvas drawer width: never wider than 86% of the viewport */
+    --sidebar-width-mobile: min(86vw, 320px);
 }
 
 /* --- Respect reduced motion --- */
@@ -615,6 +621,30 @@ body {
     flex-shrink: 0;
 }
 
+/* Alert content that contains several blocks (paragraph + list).
+   Without this wrapper the flex row would place them side by side. */
+.alert-body {
+    flex: 1;
+    min-width: 0;
+}
+
+.alert-body > p:first-child {
+    margin-bottom: var(--space-xs);
+}
+
+.alert-body ul {
+    margin: 0;
+    padding-left: var(--space-lg);
+}
+
+.alert-body li {
+    margin-bottom: 2px;
+}
+
+.alert-body li:last-child {
+    margin-bottom: 0;
+}
+
 .alert-error {
     background-color: rgba(244, 113, 116, 0.15);
     border-left-color: var(--error);
@@ -727,6 +757,17 @@ body {
     accent-color: var(--accent-primary);
     cursor: pointer;
     flex-shrink: 0;
+}
+
+/* Keeps the label and its help text together, next to the checkbox
+   (otherwise each one becomes a separate flex column). */
+.form-checkbox-body {
+    flex: 1;
+    min-width: 0;
+}
+
+.form-checkbox-body .form-help {
+    margin-top: var(--space-xs);
 }
 
 .form-checkbox:focus {
@@ -870,13 +911,21 @@ body {
 /* --- Denied page --- */
 .denied-container {
     text-align: center;
-    padding: var(--space-xl);
+    padding: var(--space-xl) var(--space-md);
+    max-width: 640px;
+    margin: 0 auto;
 }
 
-.denied-container h1 {
+.denied-title {
     font-size: var(--font-size-3xl);
+    line-height: 1.2;
     color: var(--error);
     margin-bottom: var(--space-md);
+}
+
+.denied-actions {
+    justify-content: center;
+    margin-top: var(--space-xl);
 }
 
 .denied-container p {
@@ -898,18 +947,22 @@ body {
 .menu-toggle {
     display: none;
     position: fixed;
-    top: var(--space-md);
-    left: var(--space-md);
+    top: calc((var(--topbar-height) - var(--touch-target)) / 2);
+    left: var(--space-sm);
     z-index: 101;
+    width: var(--touch-target);
+    height: var(--touch-target);
+    padding: 0;
+    align-items: center;
+    justify-content: center;
     background-color: var(--bg-elevated);
     border: 1px solid var(--border-color);
     border-radius: var(--border-radius);
-    padding: var(--space-md);
     color: var(--text-primary);
     cursor: pointer;
     font-size: var(--font-size-lg);
-    min-height: var(--target-min);
-    min-width: var(--target-min);
+    line-height: 1;
+    -webkit-tap-highlight-color: transparent;
 }
 
 .menu-toggle:focus {
@@ -922,82 +975,353 @@ body {
     color: var(--text-on-accent);
 }
 
-/* --- Responsive: Tablet --- */
+/* --- Backdrop behind the off-canvas sidebar --- */
+.sidebar-backdrop {
+    display: none;
+    position: fixed;
+    inset: 0;
+    z-index: 99;
+    background-color: rgba(0, 0, 0, 0.65);
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity var(--transition-normal);
+}
+
+.sidebar-backdrop.visible {
+    opacity: 1;
+    pointer-events: auto;
+}
+
+/*===============================================================
+  RESPONSIVE LAYOUT
+  Breakpoints:
+    1024px -> tablet: the sidebar becomes an off-canvas drawer
+     768px -> mobile: the data tables become stacked cards
+     480px -> small phones: tighter spacing, full-width controls
+  Reflow verified at 320px CSS width (WCAG 1.4.10).
+  ================================================================*/
+
+/* --- Modern viewport units (mobile browser chrome) --- */
+@supports (min-height: 100dvh) {
+    body,
+    .app-layout,
+    .main-area,
+    .login-page {
+        min-height: 100dvh;
+    }
+}
+
+/* --- Tablet: off-canvas sidebar --- */
 @media (max-width: 1024px) {
     .sidebar {
+        width: var(--sidebar-width-mobile);
         transform: translateX(-100%);
         transition: transform var(--transition-normal);
+        box-shadow: none;
+        padding-left: env(safe-area-inset-left, 0px);
     }
 
     .sidebar.open {
         transform: translateX(0);
+        box-shadow: 8px 0 32px rgba(0, 0, 0, 0.55);
     }
 
-    .main-area {
-        margin-left: 0;
+    /* Leave room for the toggle button so it never covers the logo */
+    .sidebar-header {
+        padding-left: calc(var(--touch-target) + var(--space-md));
     }
 
+    .sidebar-backdrop {
+        display: block;
+    }
+
+    /* Lock page scrolling while the drawer is open */
+    body.nav-open {
+        overflow: hidden;
+    }
+
+    .main-area,
     .app-footer {
         margin-left: 0;
     }
 
     .menu-toggle {
         display: flex;
-        align-items: center;
-        justify-content: center;
     }
 
     .top-bar {
-        padding-left: 64px;
+        padding-left: calc(var(--touch-target) + var(--space-md) + var(--space-sm));
+        padding-right: var(--space-md);
+        gap: var(--space-sm);
+    }
+
+    /* Long page titles must not push the bar wider than the screen */
+    .page-heading {
+        min-width: 0;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
     }
 
     .content-area {
-        padding-top: calc(var(--space-lg) + 16px);
+        padding-top: var(--space-lg);
+    }
+
+    .nav-link {
+        min-height: var(--touch-target);
+    }
+
+    .app-footer {
+        padding-bottom: calc(var(--space-md) + env(safe-area-inset-bottom, 0px));
     }
 }
 
-/* --- Responsive: Mobile (320px reflow) --- */
-@media (max-width: 640px) {
-    :root {
-        --font-size-base: 15px;
+/* --- Tablet: keep the table compact so columns do not wrap badly --- */
+@media (min-width: 769px) and (max-width: 1024px) {
+    .songs-table th,
+    .songs-table td {
+        padding: var(--space-sm) var(--space-md);
     }
 
+    .song-artists {
+        min-width: 150px;
+    }
+
+    .song-plays {
+        width: 90px;
+    }
+
+    .song-player {
+        min-width: 180px;
+    }
+
+    .audio-player {
+        max-width: 240px;
+    }
+}
+
+/* --- Mobile: data tables become stacked cards --- */
+@media (max-width: 768px) {
     .content-area {
         padding: var(--space-md);
     }
 
-    .login-card {
-        padding: var(--space-lg);
+    .content-inner {
+        max-width: 100%;
     }
 
-    .login-title {
-        font-size: var(--font-size-2xl);
+    /* Keep inputs at 16px so iOS Safari does not zoom on focus */
+    .form-input,
+    .form-select,
+    .search-input {
+        font-size: 16px;
+    }
+
+    /* No inner scrollbar needed: every row becomes a card */
+    .table-container {
+        overflow: visible;
+        border: 0;
+        background-color: transparent;
+        border-radius: 0;
     }
 
     .songs-table {
-        font-size: var(--font-size-sm);
+        display: block;
+        width: 100%;
+        font-size: var(--font-size-base);
     }
 
-    .songs-table th,
+    /* Column headers stay in the accessibility tree, hidden visually */
+    .songs-table thead {
+        position: absolute;
+        width: 1px;
+        height: 1px;
+        overflow: hidden;
+        clip: rect(0 0 0 0);
+        clip-path: inset(50%);
+        white-space: nowrap;
+    }
+
+    .songs-table tbody,
+    .songs-table tr,
     .songs-table td {
-        padding: var(--space-sm);
+        display: block;
+        width: 100%;
+    }
+
+    .songs-table tr {
+        background-color: var(--bg-card);
+        border: 1px solid var(--border-color);
+        border-radius: var(--border-radius-lg);
+        padding: var(--space-sm) var(--space-md);
+        margin-bottom: var(--space-md);
+    }
+
+    .songs-table tbody tr:hover {
+        background-color: var(--bg-card);
+    }
+
+    .songs-table td {
+        display: flex;
+        flex-wrap: wrap;
+        align-items: center;
+        justify-content: space-between;
+        gap: var(--space-sm);
+        padding: var(--space-sm) 0;
+        border-bottom: 1px solid var(--border-light);
+        text-align: right;
+        min-width: 0;
+        white-space: normal;
+    }
+
+    .songs-table td:last-child {
+        border-bottom: 0;
+    }
+
+    /* Field name shown inside each card row */
+    .songs-table td::before {
+        content: attr(data-label);
+        flex: 0 0 auto;
+        font-size: var(--font-size-sm);
+        font-weight: 600;
+        letter-spacing: 0.04em;
+        text-transform: uppercase;
+        color: var(--text-muted);
+        text-align: left;
+    }
+
+    .songs-table td > * {
+        min-width: 0;
+        max-width: 100%;
+    }
+
+    /* The song title works as the card heading */
+    .songs-table td.song-name {
+        display: block;
+        padding: var(--space-xs) 0 var(--space-sm);
+        border-bottom: 1px solid var(--border-color);
+        text-align: left;
+        font-size: var(--font-size-lg);
+        font-weight: 600;
+        color: var(--text-primary);
+        overflow-wrap: anywhere;
+    }
+
+    .songs-table td.song-name::before {
+        display: none;
+    }
+
+    /* Row numbers are redundant once each row is its own card */
+    .songs-table td.song-index {
+        display: none;
+    }
+
+    /* Audio player uses the full card width */
+    .songs-table td.song-player {
+        display: block;
+        padding-top: var(--space-md);
+    }
+
+    .songs-table td.song-player::before {
+        display: block;
+        margin-bottom: var(--space-xs);
     }
 
     .audio-player {
+        width: 100%;
         max-width: 100%;
+    }
+
+    /* Actions become full-width buttons */
+    .songs-table td.song-actions,
+    .songs-table td.admin-row-actions {
+        display: flex;
+        flex-wrap: nowrap;
+        gap: var(--space-sm);
+        padding-top: var(--space-md);
+        border-bottom: 0;
+    }
+
+    .songs-table td.song-actions::before,
+    .songs-table td.admin-row-actions::before {
+        display: none;
+    }
+
+    .songs-table td.song-actions .btn,
+    .songs-table td.admin-row-actions .btn {
+        flex: 1 1 0;
+        min-height: var(--touch-target);
+    }
+
+    .songs-table .path-cell {
+        max-width: none;
+        white-space: normal;
+        overflow-wrap: anywhere;
+    }
+
+    .songs-table .song-plays,
+    .songs-table .col-count {
+        text-align: right;
+    }
+
+    /* Admin dashboard header */
+    .admin-header {
+        flex-direction: column;
+        align-items: stretch;
+    }
+
+    .admin-header .btn {
+        width: 100%;
+    }
+
+    /* Delete-confirmation table stacks as label/value pairs */
+    .info-table,
+    .info-table tbody,
+    .info-table tr,
+    .info-table th,
+    .info-table td {
+        display: block;
+        width: 100%;
+        max-width: 100%;
+    }
+
+    .info-table th {
+        width: auto;
+        padding-bottom: 0;
+    }
+
+    .info-table td {
+        padding-top: 0;
+        margin-bottom: var(--space-sm);
+        overflow-wrap: anywhere;
+    }
+
+    .section-heading {
+        font-size: var(--font-size-xl);
+    }
+
+    .welcome-banner {
+        padding: var(--space-md);
+    }
+
+    .login-container {
+        padding: var(--space-md);
+    }
+}
+
+/* --- Small phones --- */
+@media (max-width: 480px) {
+    .content-area {
+        padding: var(--space-sm) var(--space-md);
     }
 
     .search-group {
         flex-direction: column;
     }
 
-    .search-input {
+    .search-input,
+    .search-group .btn {
         width: 100%;
-    }
-
-    .admin-header {
-        flex-direction: column;
-        align-items: flex-start;
     }
 
     .form-actions {
@@ -1008,14 +1332,81 @@ body {
         width: 100%;
     }
 
-    .songs-table th,
-    .songs-table td {
-        white-space: normal;
+    .login-card {
+        padding: var(--space-lg);
     }
 
-    /* Hide less critical columns on mobile to improve readability */
-    .songs-table .song-plays {
-        display: none;
+    .login-title {
+        font-size: var(--font-size-2xl);
+    }
+
+    .login-subtitle {
+        margin-bottom: var(--space-lg);
+    }
+
+    .denied-title {
+        font-size: var(--font-size-2xl);
+    }
+
+    .songs-table td.song-actions,
+    .songs-table td.admin-row-actions {
+        flex-direction: column;
+    }
+
+    .songs-table td.song-actions .btn,
+    .songs-table td.admin-row-actions .btn {
+        width: 100%;
+    }
+}
+
+/* --- Very narrow phones: stack label above value --- */
+@media (max-width: 380px) {
+    .songs-table td {
+        flex-direction: column;
+        align-items: flex-start;
+        text-align: left;
+        gap: 2px;
+    }
+
+    .songs-table .song-plays,
+    .songs-table .col-count {
+        text-align: left;
+    }
+}
+
+/* --- Landscape phones: keep the drawer usable --- */
+@media (max-width: 1024px) and (orientation: landscape) and (max-height: 520px) {
+    .sidebar {
+        width: min(60vw, 300px);
+    }
+
+    .sidebar-header {
+        padding: var(--space-md) var(--space-lg);
+    }
+
+    .sidebar-nav {
+        padding: var(--space-xs) 0;
+    }
+}
+
+/* --- Touch devices: comfortable targets --- */
+@media (pointer: coarse) {
+    .btn,
+    .nav-link,
+    .menu-toggle {
+        min-height: var(--touch-target);
+    }
+
+    .btn-sm {
+        min-height: 36px;
+    }
+}
+
+/* --- Wide screens --- */
+@media (min-width: 1440px) {
+    :root {
+        --sidebar-width: 264px;
+        --max-content-width: 1320px;
     }
 }
 

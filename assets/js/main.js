@@ -3,53 +3,151 @@
   General UI helpers
 
   Responsibilities:
-  - Mobile sidebar toggle (accessible)
+  - Off-canvas sidebar drawer (accessible): scroll lock, backdrop,
+    focus management, Escape/outside-click closing, resize reset
   - Focus management for dynamic content
   - Announce dynamic messages to screen readers
+  - Prevent double form submission
+
+  Responsive breakpoints live in styles.css:
+    <= 1024px -> drawer mode (the toggle button is visible)
   ================================================================*/
 
 (function () {
     'use strict';
 
-    // --- Mobile sidebar toggle ---
+    var DRAWER_BREAKPOINT = 1024;
+    var ICON_MENU = '\u2630'; // hamburger
+    var ICON_CLOSE = '\u2715'; // multiplication x
+
+    // --- Off-canvas sidebar ---
     var menuToggle = document.getElementById('menuToggle');
     var sidebar = document.getElementById('sidebar');
+    var backdrop = document.getElementById('sidebarBackdrop');
+    var menuIcon = menuToggle ? menuToggle.querySelector('.menu-toggle-icon') : null;
+
+    function isDrawerMode() {
+        return window.matchMedia('(max-width: ' + DRAWER_BREAKPOINT + 'px)').matches;
+    }
+
+    function isOpen() {
+        return sidebar ? sidebar.classList.contains('open') : false;
+    }
+
+    /**
+     * Keep the drawer out of the tab order while it is closed.
+     * `inert` is supported by modern browsers; ignored elsewhere.
+     */
+    function syncInert() {
+        if (!sidebar || !('inert' in sidebar)) {
+            return;
+        }
+        sidebar.inert = isDrawerMode() && !isOpen();
+    }
+
+    function setToggleState(open) {
+        if (!menuToggle) {
+            return;
+        }
+        menuToggle.setAttribute('aria-expanded', open ? 'true' : 'false');
+        menuToggle.setAttribute(
+            'aria-label',
+            open ? 'Cerrar menu de navegacion' : 'Abrir menu de navegacion'
+        );
+        if (menuIcon) {
+            menuIcon.textContent = open ? ICON_CLOSE : ICON_MENU;
+        }
+    }
+
+    function openSidebar() {
+        if (!sidebar || !isDrawerMode()) {
+            return;
+        }
+        sidebar.classList.add('open');
+        document.body.classList.add('nav-open');
+        if (backdrop) {
+            backdrop.classList.add('visible');
+        }
+        setToggleState(true);
+        syncInert();
+
+        // Move focus into the drawer so keyboard users can navigate it
+        var firstFocusable = sidebar.querySelector('a[href], button');
+        if (firstFocusable) {
+            firstFocusable.focus();
+        }
+    }
+
+    function closeSidebar(restoreFocus) {
+        if (!sidebar) {
+            return;
+        }
+        var wasOpen = isOpen();
+
+        sidebar.classList.remove('open');
+        document.body.classList.remove('nav-open');
+        if (backdrop) {
+            backdrop.classList.remove('visible');
+        }
+        setToggleState(false);
+        syncInert();
+
+        if (wasOpen && restoreFocus && menuToggle) {
+            menuToggle.focus();
+        }
+    }
 
     if (menuToggle && sidebar) {
+        syncInert();
+
         menuToggle.addEventListener('click', function () {
-            var expanded = menuToggle.getAttribute('aria-expanded') === 'true';
-            if (expanded) {
-                sidebar.classList.remove('open');
-                menuToggle.setAttribute('aria-expanded', 'false');
-                menuToggle.setAttribute('aria-label', 'Abrir menu de navegacion');
+            if (isOpen()) {
+                closeSidebar(true);
             } else {
-                sidebar.classList.add('open');
-                menuToggle.setAttribute('aria-expanded', 'true');
-                menuToggle.setAttribute('aria-label', 'Cerrar menu de navegacion');
+                openSidebar();
             }
         });
 
-        // Close sidebar when clicking outside (on mobile)
-        document.addEventListener('click', function (e) {
-            if (window.innerWidth <= 1024) {
-                if (!sidebar.contains(e.target) &&
-                    !menuToggle.contains(e.target) &&
-                    sidebar.classList.contains('open')) {
-                    sidebar.classList.remove('open');
-                    menuToggle.setAttribute('aria-expanded', 'false');
-                    menuToggle.setAttribute('aria-label', 'Abrir menu de navegacion');
+        // Close when tapping the backdrop
+        if (backdrop) {
+            backdrop.addEventListener('click', function () {
+                closeSidebar(true);
+            });
+        }
+
+        // Close after choosing a destination (the page will navigate anyway)
+        sidebar.addEventListener('click', function (event) {
+            var link = event.target.closest ? event.target.closest('a[href]') : null;
+            if (link) {
+                closeSidebar(false);
+            }
+        });
+
+        // Close on Escape and return focus to the toggle
+        document.addEventListener('keydown', function (event) {
+            if ((event.key === 'Escape' || event.key === 'Esc') && isOpen()) {
+                closeSidebar(true);
+            }
+        });
+
+        // Reset the drawer state when resizing back to desktop
+        var resizeTimer = null;
+        window.addEventListener('resize', function () {
+            if (resizeTimer) {
+                window.clearTimeout(resizeTimer);
+            }
+            resizeTimer = window.setTimeout(function () {
+                if (!isDrawerMode()) {
+                    closeSidebar(false);
                 }
-            }
+                syncInert();
+            }, 150);
         });
 
-        // Close sidebar on Escape
-        document.addEventListener('keydown', function (e) {
-            if (e.key === 'Escape' && sidebar.classList.contains('open')) {
-                sidebar.classList.remove('open');
-                menuToggle.setAttribute('aria-expanded', 'false');
-                menuToggle.setAttribute('aria-label', 'Abrir menu de navegacion');
-                menuToggle.focus();
-            }
+        // Also reset when the device rotates
+        window.addEventListener('orientationchange', function () {
+            closeSidebar(false);
+            syncInert();
         });
     }
 

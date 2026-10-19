@@ -140,31 +140,33 @@ csrfToken = EnsureCSRFToken()
 
                     <% If hasResults Then %>
                         <div class="table-container" role="region" aria-label="Tabla de canciones administrativas" tabindex="0">
-                            <table class="songs-table admin-table">
+                            <%' Explicit roles keep the table semantics when CSS turns
+                              ' the rows into cards on small screens (display: block) %>
+                            <table class="songs-table admin-table" role="table">
                                 <caption class="sr-only">Lista administrativa de canciones</caption>
-                                <thead>
-                                    <tr>
-                                        <th scope="col">ID</th>
-                                        <th scope="col">Cancion</th>
-                                        <th scope="col">Artista(s)</th>
-                                        <th scope="col">Ruta</th>
-                                        <th scope="col">Reproduc.</th>
-                                        <th scope="col">Albumes</th>
-                                        <th scope="col">Playlists</th>
-                                        <th scope="col">Acciones</th>
+                                <thead role="rowgroup">
+                                    <tr role="row">
+                                        <th scope="col" role="columnheader">ID</th>
+                                        <th scope="col" role="columnheader">Cancion</th>
+                                        <th scope="col" role="columnheader">Artista(s)</th>
+                                        <th scope="col" role="columnheader">Ruta</th>
+                                        <th scope="col" role="columnheader">Reproduc.</th>
+                                        <th scope="col" role="columnheader">Albumes</th>
+                                        <th scope="col" role="columnheader">Playlists</th>
+                                        <th scope="col" role="columnheader">Acciones</th>
                                     </tr>
                                 </thead>
-                                <tbody>
+                                <tbody role="rowgroup">
                                     <% For i = 0 To songCount - 1 %>
-                                        <tr>
-                                            <td><%= Encode(songs(0, i)) %></td>
-                                            <td><%= Encode(songs(1, i)) %></td>
-                                            <td><%= Encode(songs(4, i)) %></td>
-                                            <td class="path-cell" title="<%= EncodeAttr(songs(2, i)) %>"><%= Encode(Left(songs(2, i), 30)) %><% If Len(songs(2, i)) > 30 Then Response.Write "..." %></td>
-                                            <td><%= Encode(songs(3, i)) %></td>
-                                            <td><%= Encode(songs(5, i)) %></td>
-                                            <td><%= Encode(songs(6, i)) %></td>
-                                            <td class="admin-row-actions">
+                                        <tr role="row">
+                                            <td class="col-id" role="cell" data-label="ID"><%= Encode(songs(0, i)) %></td>
+                                            <td class="song-name" role="cell"><%= Encode(songs(1, i)) %></td>
+                                            <td class="song-artists" role="cell" data-label="Artista(s)"><%= Encode(songs(4, i)) %></td>
+                                            <td class="path-cell" role="cell" data-label="Ruta" title="<%= EncodeAttr(songs(2, i)) %>"><%= Encode(Left(songs(2, i), 30)) %><% If Len(songs(2, i)) > 30 Then Response.Write "..." %></td>
+                                            <td class="song-plays" role="cell" data-label="Reproducciones"><%= Encode(songs(3, i)) %></td>
+                                            <td class="col-count" role="cell" data-label="Albumes"><%= Encode(songs(5, i)) %></td>
+                                            <td class="col-count" role="cell" data-label="Playlists"><%= Encode(songs(6, i)) %></td>
+                                            <td class="admin-row-actions" role="cell">
                                                 <a href="<%= GetAppPath() %>/admin/song_edit.asp?id=<%= EncodeURL(songs(0, i)) %>" class="btn btn-sm btn-edit" aria-label="Editar cancion: <%= Encode(songs(1, i)) %>">
                                                     Editar
                                                 </a>

@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+    <meta name="color-scheme" content="dark">
+    <meta name="theme-color" content="#0d0d12">
+    <title>Nueva Cancion - PoliMusic</title>
+    <link rel="stylesheet" href="../../assets/css/styles.css">
+</head>
+<body>
+    <a href="#main-content" class="skip-link">Saltar al contenido principal</a>
+
+    <div class="app-layout">
+        <aside class="sidebar" id="sidebar" aria-label="Navegacion principal">
+            <div class="sidebar-header">
+                <a href="#" class="logo-link"><span class="logo-text">PoliMusic</span></a>
+            </div>
+            <nav class="sidebar-nav" aria-label="Menu de navegacion">
+                <ul class="nav-list">
+                    <li class="nav-item">
+                        <a href="#" class="nav-link"><span class="nav-icon" aria-hidden="true">&#9835;</span><span>Canciones</span></a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="#" class="nav-link" aria-current="page"><span class="nav-icon" aria-hidden="true">&#9881;</span><span>Administrar</span></a>
+                    </li>
+                </ul>
+            </nav>
+            <div class="sidebar-footer">
+                <div class="user-info">
+                    <span class="user-label"><span class="user-icon" aria-hidden="true">&#9679;</span> userAdmin</span>
+                    <span class="user-role badge badge-admin">Admin</span>
+                </div>
+                <a href="#" class="btn btn-logout btn-full">Cerrar Sesion</a>
+            </div>
+        </aside>
+
+        <div class="sidebar-backdrop" id="sidebarBackdrop" aria-hidden="true"></div>
+
+        <button type="button" class="menu-toggle" id="menuToggle" aria-expanded="false" aria-controls="sidebar" aria-label="Abrir menu de navegacion">
+            <span class="menu-toggle-icon" aria-hidden="true">&#9776;</span>
+        </button>
+
+        <div class="main-area">
+            <header class="top-bar" role="banner">
+                <h1 class="page-heading">Nueva Cancion</h1>
+            </header>
+
+            <main id="main-content" class="content-area" role="main">
+                <div class="content-inner">
+                    <h2 class="section-heading">Crear Nueva Cancion</h2>
+
+                    <div class="alert alert-error" role="alert" aria-live="assertive">
+                        <span class="alert-icon" aria-hidden="true">!</span>
+                        <div class="alert-body">
+                            <p>Se detectaron los siguientes errores:</p>
+                            <ul>
+                                <li>El nombre de la cancion es obligatorio.</li>
+                                <li>La ruta del archivo de audio es obligatoria.</li>
+                            </ul>
+                        </div>
+                    </div>
+
+                    <form method="post" action="#" class="admin-form" novalidate>
+                        <input type="hidden" name="csrf_token" value="token">
+
+                        <div class="form-group">
+                            <label for="song_name" class="form-label">
+                                Nombre de la cancion <span class="required" aria-label="obligatorio">*</span>
+                            </label>
+                            <input type="text" id="song_name" name="song_name" value="Mi cancion nueva" maxlength="100"
+                                   required class="form-input" aria-required="true" aria-invalid="true">
+                        </div>
+
+                        <div class="form-group">
+                            <label for="song_path" class="form-label">
+                                Ruta del archivo de audio <span class="required" aria-label="obligatorio">*</span>
+                            </label>
+                            <input type="text" id="song_path" name="song_path" value="" maxlength="255"
+                                   required class="form-input" aria-required="true" aria-describedby="song_path_help" aria-invalid="true">
+                            <p id="song_path_help" class="form-help">
+                                Ingrese la ruta relativa (ej: assets/audio/cancion.mp3).
+                                No use rutas absolutas ni caracteres como ..
+                            </p>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="plays" class="form-label">Numero de reproducciones</label>
+                            <input type="number" id="plays" name="plays" value="0" min="0" class="form-input" aria-describedby="plays_help">
+                            <p id="plays_help" class="form-help">Valor predeterminado: 0</p>
+                        </div>
+
+                        <div class="form-group">
+                            <span class="form-label" id="artists-label">Artistas asociados</span>
+                            <p class="form-help" id="artists_help">
+                                Seleccione uno o mas artistas para esta cancion.
+                                Use Ctrl+Clic (Cmd+Clic en Mac) para seleccion multiple.
+                            </p>
+                            <select name="artists" id="artists" multiple size="6" class="form-select"
+                                    aria-labelledby="artists-label" aria-describedby="artists_help">
+                                <option value="1">Juan Gabriel</option>
+                                <option value="2">Ana Gabriel</option>
+                                <option value="3">Mariah Carey</option>
+                                <option value="4">Elvis Presley</option>
+                                <option value="5">Edward Sheeran</option>
+                            </select>
+                        </div>
+
+                        <div class="form-actions">
+                            <button type="submit" class="btn btn-primary">Crear Cancion</button>
+                            <a href="#" class="btn btn-secondary">Cancelar</a>
+                        </div>
+                    </form>
+                </div>
+            </main>
+        </div>
+    </div>
+
+    <footer class="app-footer" role="contentinfo">
+        <p>PoliMusic &copy; 2025 - Taller de Aplicaciones Web Avanzadas</p>
+    </footer>
+
+    <script src="../../assets/js/main.js"></script>
+</body>
+</html>

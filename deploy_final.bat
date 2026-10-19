@@ -18,15 +18,21 @@ echo ============================================================
 echo.
 
 echo [1/5] Sincronizando proyecto a wwwroot...
-robocopy "%DESK%\config"   "%ROOT%\config"   /MIR /XF secrets.asp
-robocopy "%DESK%\includes" "%ROOT%\includes" /MIR
-robocopy "%DESK%\admin"    "%ROOT%\admin"    /MIR
+robocopy "%DESK%\config"     "%ROOT%\config"     /MIR /XF secrets.asp
+robocopy "%DESK%\includes"   "%ROOT%\includes"   /MIR
+robocopy "%DESK%\admin"      "%ROOT%\admin"      /MIR
+robocopy "%DESK%\assets\css" "%ROOT%\assets\css" /MIR
+robocopy "%DESK%\assets\js"  "%ROOT%\assets\js"  /MIR
 copy /Y "%DESK%\default.asp" "%ROOT%\default.asp" >nul 2>&1
 copy /Y "%DESK%\login.asp"   "%ROOT%\login.asp"   >nul 2>&1
 copy /Y "%DESK%\songs.asp"   "%ROOT%\songs.asp"   >nul 2>&1
 copy /Y "%DESK%\logout.asp"  "%ROOT%\logout.asp"  >nul 2>&1
 copy /Y "%DESK%\denied.asp"  "%ROOT%\denied.asp"  >nul 2>&1
 echo     Sincronizado.
+
+echo     Comprobando que el CSS/JS responsive llego al servidor:
+findstr /C:"sidebar-backdrop" "%ROOT%\assets\css\styles.css" >nul && echo       styles.css OK || echo       ERROR: styles.css sin cambios responsive
+findstr /C:"syncInert"        "%ROOT%\assets\js\main.js"     >nul && echo       main.js    OK || echo       ERROR: main.js sin cambios responsive
 echo.
 
 echo [2/5] Confirmando que la app IIS existe con la ruta correcta...

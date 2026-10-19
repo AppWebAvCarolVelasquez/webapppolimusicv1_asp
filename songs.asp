@@ -209,32 +209,34 @@ End If
 
                     <% If hasResults Then %>
                         <div class="table-container" role="region" aria-labelledby="song-list-heading" tabindex="0">
-                            <table class="songs-table">
+                            <%' Explicit roles keep the table semantics when CSS turns
+                              ' the rows into cards on small screens (display: block) %>
+                            <table class="songs-table" role="table">
                                 <caption class="sr-only">Lista de canciones disponibles en PoliMusic</caption>
-                                <thead>
-                                    <tr>
-                                        <th scope="col">#</th>
-                                        <th scope="col">Cancion</th>
-                                        <th scope="col">Artista(s)</th>
-                                        <th scope="col">Reproducciones</th>
-                                        <th scope="col">Reproductor</th>
+                                <thead role="rowgroup">
+                                    <tr role="row">
+                                        <th scope="col" role="columnheader">#</th>
+                                        <th scope="col" role="columnheader">Cancion</th>
+                                        <th scope="col" role="columnheader">Artista(s)</th>
+                                        <th scope="col" role="columnheader">Reproducciones</th>
+                                        <th scope="col" role="columnheader">Reproductor</th>
                                         <% If IsAdmin() Then %>
-                                            <th scope="col">Acciones</th>
+                                            <th scope="col" role="columnheader">Acciones</th>
                                         <% End If %>
                                     </tr>
                                 </thead>
-                                <tbody>
+                                <tbody role="rowgroup">
                                     <% For i = 0 To songCount - 1 %>
-                                        <tr>
-                                            <td class="song-index"><%= i + 1 %></td>
-                                            <td class="song-name">
+                                        <tr role="row">
+                                            <td class="song-index" role="cell" data-label="#"><%= i + 1 %></td>
+                                            <td class="song-name" role="cell">
                                                 <span id="song-title-<%= songs(0, i) %>"><%= Encode(songs(1, i)) %></span>
                                             </td>
-                                            <td class="song-artists">
+                                            <td class="song-artists" role="cell" data-label="Artista(s)">
                                                 <%= Encode(songs(4, i)) %>
                                             </td>
-                                            <td class="song-plays"><%= Encode(songs(3, i)) %></td>
-                                            <td class="song-player">
+                                            <td class="song-plays" role="cell" data-label="Reproducciones"><%= Encode(songs(3, i)) %></td>
+                                            <td class="song-player" role="cell" data-label="Reproductor">
                                                 <% If songs(2, i) <> "" Then %>
                                                     <% Dim audioPath %>
                                                     <% audioPath = ResolveAudioPath(songs(2, i)) %>
@@ -257,7 +259,7 @@ End If
                                                 <% End If %>
                                             </td>
                                             <% If IsAdmin() Then %>
-                                                <td class="song-actions">
+                                                <td class="song-actions" role="cell">
                                                     <a href="<%= GetAppPath() %>/admin/song_edit.asp?id=<%= EncodeURL(songs(0, i)) %>" class="btn btn-sm btn-edit" aria-label="Editar cancion <%= Encode(songs(1, i)) %>">
                                                         Editar
                                                     </a>
